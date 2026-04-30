@@ -1,0 +1,56 @@
+# Méthodologie GeoAgri Sénégal
+
+## 1. Objectif méthodologique
+
+L’objectif est de produire un score régional de risque de sécheresse agricole au Sénégal à partir de données satellitaires et climatiques.
+
+## 2. Sources de données
+
+### Sentinel-2
+Utilisé pour calculer le NDVI, qui mesure l’état de la végétation.
+
+### CHIRPS
+Utilisé pour analyser les précipitations et identifier les déficits pluviométriques.
+
+### GAUL / limites administratives
+Utilisé pour agréger les résultats par région.
+
+## 3. Indicateurs
+
+### NDVI
+Le NDVI permet d’estimer la vigueur végétale.
+
+### Anomalie NDVI
+L’anomalie NDVI compare la végétation actuelle à une situation de référence.
+
+### Anomalie de pluie
+L’anomalie de pluie compare les précipitations actuelles à une moyenne historique.
+
+## 4. Score de risque
+
+Le score combine :
+
+- stress végétal
+- stress pluviométrique
+
+Le résultat est normalisé entre 0 et 1.
+
+## 5. Classification
+
+Les régions sont classées ainsi :
+
+- 0.00 à 0.20 : Normal
+- 0.20 à 0.40 : Risque modéré
+- supérieur ou égal à 0.40 : Risque élevé
+
+## 6. Agrégation régionale
+
+Le score est calculé spatialement puis agrégé par région administrative afin de produire une lecture décisionnelle simple.
+
+## 7. Limites
+
+Ce prototype ne remplace pas les observations terrain. Il sert de système d’aide à la décision et doit être validé avec des données locales.
+
+## 8. Extension vers la RDC
+
+La même méthode pourra être adaptée à la RDC province par province, avec ajustement des seuils, des saisons agricoles et des données locales.
