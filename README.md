@@ -1,16 +1,50 @@
-# React + Vite
+# GeoAgri Sénégal – Drought Early Warning Dashboard
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+## Description
 
-Currently, two official plugins are available:
+GeoAgri Sénégal est un dashboard interactif permettant de visualiser les risques de sécheresse agricole au Sénégal.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+Le projet combine des données géospatiales issues de Google Earth Engine avec une interface web React pour aider à identifier les régions agricoles prioritaires.
 
-## React Compiler
+## Objectifs
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+- Visualiser les risques de sécheresse par région
+- Identifier les régions prioritaires
+- Afficher un score de risque agricole
+- Générer un rapport simple
+- Servir de modèle pour le futur projet GeoAgri RDC
 
-## Expanding the ESLint configuration
+## Fonctionnalités
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+- Carte interactive du Sénégal
+- Classification des régions :
+  - Normal
+  - Risque modéré
+  - Risque élevé
+- Graphique de synthèse
+- Liste des régions prioritaires
+- Export d’un rapport texte
+
+## Technologies utilisées
+
+- React
+- React Leaflet
+- Recharts
+- Google Earth Engine
+- GeoJSON
+- OpenStreetMap
+
+## Données utilisées
+
+- Données satellitaires Sentinel-2
+- Indices de végétation NDVI
+- Données pluviométriques CHIRPS
+- Limites administratives régionales du Sénégal
+
+## Résultat
+
+Le dashboard permet d’obtenir une vue synthétique des régions sénégalaises exposées au risque de sécheresse agricole.
+
+## Prochaine évolution
+
+Ce prototype servira de base méthodologique pour développer GeoAgri RDC, avec une analyse province par province.
