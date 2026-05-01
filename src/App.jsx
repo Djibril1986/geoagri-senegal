@@ -1,6 +1,6 @@
 import { MapContainer, TileLayer, GeoJSON } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import {
   BarChart,
   Bar,
@@ -36,6 +36,7 @@ function getChartColor(name) {
 
 export default function App() {
   const [geoData, setGeoData] = useState(null);
+  const geoJsonRef = useRef(null);
 
   useEffect(() => {
     fetch("/data/Senegal_Regions_Risk_GeoJSON_V3.geojson")
@@ -121,10 +122,39 @@ React · Leaflet · Data Visualization · Vercel
     const label = getRiskLabel(score);
 
     layer.bindPopup(`
-      <strong>${name}</strong><br/>
-      Risk score: ${score.toFixed(2)}<br/>
-      Level: ${label}
+      <div style="font-family: Arial, sans-serif; min-width: 170px;">
+        <strong style="font-size: 14px;">${name}</strong><br/>
+        <hr style="margin: 6px 0;" />
+        <span>Risk score: <strong>${score.toFixed(2)}</strong></span><br/>
+        <span>Level: <strong>${label}</strong></span>
+      </div>
     `);
+
+    layer.on({
+      mouseover: (event) => {
+        const targetLayer = event.target;
+        targetLayer.setStyle({
+          weight: 4,
+          color: "#111827",
+          fillOpacity: 0.85,
+        });
+        targetLayer.bringToFront();
+      },
+
+      mouseout: (event) => {
+        if (geoJsonRef.current) {
+          geoJsonRef.current.resetStyle(event.target);
+        }
+      },
+
+      click: (event) => {
+        const map = event.target._map;
+        map.fitBounds(event.target.getBounds(), {
+          padding: [30, 30],
+        });
+        event.target.openPopup();
+      },
+    });
   }
 
   return (
@@ -296,6 +326,7 @@ React · Leaflet · Data Visualization · Vercel
 
         {geoData && (
           <GeoJSON
+            ref={geoJsonRef}
             data={geoData}
             style={styleRegion}
             onEachFeature={onEachRegion}
