@@ -22,15 +22,15 @@ function getRiskColor(score) {
 function getRiskLabel(score) {
   const value = Number(score);
 
-  if (value >= 0.4) return "Risque élevé";
-  if (value >= 0.2) return "Risque modéré";
+  if (value >= 0.4) return "High risk";
+  if (value >= 0.2) return "Moderate risk";
   return "Normal";
 }
 
 function getChartColor(name) {
   if (name === "Normal") return "#22c55e";
-  if (name === "Modéré") return "#f59e0b";
-  if (name === "Élevé") return "#ef4444";
+  if (name === "Moderate") return "#f59e0b";
+  if (name === "High") return "#ef4444";
   return "#1d4ed8";
 }
 
@@ -41,7 +41,7 @@ export default function App() {
     fetch("/data/Senegal_Regions_Risk_GeoJSON_V3.geojson")
       .then((res) => res.json())
       .then((geo) => setGeoData(geo))
-      .catch((error) => console.error("Erreur GeoJSON :", error));
+      .catch((error) => console.error("GeoJSON loading error:", error));
   }, []);
 
   const regions =
@@ -54,15 +54,13 @@ export default function App() {
     }) || [];
 
   const normalCount = regions.filter((r) => r.label === "Normal").length;
-  const moderateCount = regions.filter(
-    (r) => r.label === "Risque modéré"
-  ).length;
-  const highCount = regions.filter((r) => r.label === "Risque élevé").length;
+  const moderateCount = regions.filter((r) => r.label === "Moderate risk").length;
+  const highCount = regions.filter((r) => r.label === "High risk").length;
 
   const chartData = [
     { name: "Normal", value: normalCount },
-    { name: "Modéré", value: moderateCount },
-    { name: "Élevé", value: highCount },
+    { name: "Moderate", value: moderateCount },
+    { name: "High", value: highCount },
   ];
 
   const priorityRegions = regions
@@ -73,36 +71,36 @@ export default function App() {
     const date = new Date().toLocaleDateString();
 
     let report = `
-GeoAgri Sénégal - Rapport de Risque Agricole
-Date : ${date}
+GeoAgri Senegal - Agricultural Drought Risk Report
+Date: ${date}
 
-Résumé :
-- Régions normales : ${normalCount}
-- Régions à risque modéré : ${moderateCount}
-- Régions à risque élevé : ${highCount}
+Summary:
+- Normal regions: ${normalCount}
+- Moderate risk regions: ${moderateCount}
+- High risk regions: ${highCount}
 
-Régions prioritaires :
+Priority regions:
 `;
 
     if (priorityRegions.length === 0) {
-      report += "Aucune région critique détectée.\n";
+      report += "No critical region detected.\n";
     } else {
       priorityRegions.forEach((r) => {
-        report += `- ${r.name} : ${r.score.toFixed(2)} (${r.label})\n`;
+        report += `- ${r.name}: ${r.score.toFixed(2)} (${r.label})\n`;
       });
     }
 
     report += `
-Développé par Djibril ABEDI
+Developed by Djibril ABEDI
 Senior Geospatial Data Scientist
-GeoAgri Sénégal · 2026
+GeoAgri Senegal · 2026
 React · Leaflet · Data Visualization · Vercel
 `;
 
     const blob = new Blob([report], { type: "text/plain;charset=utf-8;" });
     const link = document.createElement("a");
     link.href = URL.createObjectURL(blob);
-    link.download = "GeoAgri_Rapport.txt";
+    link.download = "GeoAgri_Senegal_Report.txt";
     link.click();
   }
 
@@ -124,8 +122,8 @@ React · Leaflet · Data Visualization · Vercel
 
     layer.bindPopup(`
       <strong>${name}</strong><br/>
-      Score risque : ${score.toFixed(2)}<br/>
-      Niveau : ${label}
+      Risk score: ${score.toFixed(2)}<br/>
+      Level: ${label}
     `);
   }
 
@@ -134,7 +132,31 @@ React · Leaflet · Data Visualization · Vercel
       <div
         style={{
           position: "absolute",
-          top: 20,
+          top: 16,
+          left: "50%",
+          transform: "translateX(-50%)",
+          zIndex: 1200,
+          background: "rgba(255,255,255,0.95)",
+          padding: "12px 22px",
+          borderRadius: "12px",
+          boxShadow: "0 4px 12px rgba(0,0,0,0.2)",
+          fontFamily: "Arial, sans-serif",
+          textAlign: "center",
+          minWidth: "520px",
+        }}
+      >
+        <h2 style={{ margin: 0, fontSize: "18px", color: "#14532d" }}>
+          GeoAgri Sénégal | Drought Risk Intelligence Dashboard
+        </h2>
+        <p style={{ margin: "4px 0 0", fontSize: "13px", color: "#555" }}>
+          Early warning system for agricultural drought monitoring
+        </p>
+      </div>
+
+      <div
+        style={{
+          position: "absolute",
+          top: 100,
           left: 20,
           zIndex: 1000,
           background: "white",
@@ -144,17 +166,13 @@ React · Leaflet · Data Visualization · Vercel
           width: "300px",
           fontFamily: "Arial, sans-serif",
           fontSize: "13px",
-          maxHeight: "90vh",
+          maxHeight: "84vh",
           overflowY: "auto",
         }}
       >
         <h3 style={{ margin: "0 0 8px 0", textAlign: "center" }}>
-          GeoAgri Sénégal – Système d’alerte sécheresse
+          Regional Risk Summary
         </h3>
-
-        <p style={{ margin: "0 0 10px 0", color: "#555", textAlign: "center" }}>
-          Système d’alerte précoce sécheresse et mauvaises récoltes
-        </p>
 
         <hr />
 
@@ -164,12 +182,12 @@ React · Leaflet · Data Visualization · Vercel
         </div>
 
         <div style={{ display: "flex", justifyContent: "space-between" }}>
-          <span>🟠 Risque modéré</span>
+          <span>🟠 Moderate risk</span>
           <strong>{moderateCount}</strong>
         </div>
 
         <div style={{ display: "flex", justifyContent: "space-between" }}>
-          <span>🔴 Risque élevé</span>
+          <span>🔴 High risk</span>
           <strong>{highCount}</strong>
         </div>
 
@@ -191,11 +209,11 @@ React · Leaflet · Data Visualization · Vercel
         <hr />
 
         <h4 style={{ textAlign: "center", margin: "10px 0" }}>
-          Régions prioritaires
+          Priority Regions
         </h4>
 
         {priorityRegions.length === 0 ? (
-          <p style={{ textAlign: "center" }}>Aucune région critique détectée.</p>
+          <p style={{ textAlign: "center" }}>No critical region detected.</p>
         ) : (
           <ul style={{ paddingLeft: "0", listStyle: "none" }}>
             {priorityRegions.map((region) => (
@@ -243,7 +261,7 @@ React · Leaflet · Data Visualization · Vercel
           <br />
           Senior Geospatial Data Scientist
           <br />
-          GeoAgri Sénégal · 2026
+          GeoAgri Senegal · 2026
           <br />
           React · Leaflet · Data Visualization · Vercel
         </div>
@@ -262,7 +280,7 @@ React · Leaflet · Data Visualization · Vercel
             fontWeight: "bold",
           }}
         >
-          📄 Exporter le rapport
+          📄 Export Report
         </button>
       </div>
 
