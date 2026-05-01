@@ -14,9 +14,9 @@ import {
 function getRiskColor(score) {
   const value = Number(score);
 
-  if (value >= 0.4) return "#ef4444"; // rouge
-  if (value >= 0.2) return "#f59e0b"; // orange
-  return "#22c55e"; // vert
+  if (value >= 0.4) return "#ef4444";
+  if (value >= 0.2) return "#f59e0b";
+  return "#22c55e";
 }
 
 function getRiskLabel(score) {
@@ -30,7 +30,8 @@ function getRiskLabel(score) {
 function getChartColor(name) {
   if (name === "Normal") return "#22c55e";
   if (name === "Modéré") return "#f59e0b";
-  return "#ef4444";
+  if (name === "Élevé") return "#ef4444";
+  return "#1d4ed8";
 }
 
 export default function App() {
@@ -40,9 +41,7 @@ export default function App() {
     fetch("/data/Senegal_Regions_Risk_GeoJSON_V3.geojson")
       .then((res) => res.json())
       .then((geo) => setGeoData(geo))
-      .catch((error) => {
-        console.error("Erreur chargement GeoJSON :", error);
-      });
+      .catch((error) => console.error("Erreur GeoJSON :", error));
   }, []);
 
   const regions =
@@ -88,15 +87,22 @@ Régions prioritaires :
     if (priorityRegions.length === 0) {
       report += "Aucune région critique détectée.\n";
     } else {
-      priorityRegions.forEach((region) => {
-        report += `- ${region.name} : ${region.score.toFixed(2)} (${region.label})\n`;
+      priorityRegions.forEach((r) => {
+        report += `- ${r.name} : ${r.score.toFixed(2)} (${r.label})\n`;
       });
     }
+
+    report += `
+Développé par Djibril ABEDI
+Senior Geospatial Data Scientist
+GeoAgri Sénégal · 2026
+React · Leaflet · Data Visualization · Vercel
+`;
 
     const blob = new Blob([report], { type: "text/plain;charset=utf-8;" });
     const link = document.createElement("a");
     link.href = URL.createObjectURL(blob);
-    link.download = "GeoAgri_Rapport_Senegal.txt";
+    link.download = "GeoAgri_Rapport.txt";
     link.click();
   }
 
@@ -142,11 +148,11 @@ Régions prioritaires :
           overflowY: "auto",
         }}
       >
-        <h3 style={{ margin: "0 0 8px 0" }}>
+        <h3 style={{ margin: "0 0 8px 0", textAlign: "center" }}>
           GeoAgri Sénégal – Système d’alerte sécheresse
         </h3>
 
-        <p style={{ margin: "0 0 10px 0", color: "#555" }}>
+        <p style={{ margin: "0 0 10px 0", color: "#555", textAlign: "center" }}>
           Système d’alerte précoce sécheresse et mauvaises récoltes
         </p>
 
@@ -173,7 +179,6 @@ Régions prioritaires :
               <XAxis dataKey="name" />
               <YAxis allowDecimals={false} />
               <Tooltip />
-
               <Bar dataKey="value">
                 {chartData.map((entry, index) => (
                   <Cell key={`cell-${index}`} fill={getChartColor(entry.name)} />
@@ -185,10 +190,12 @@ Régions prioritaires :
 
         <hr />
 
-        <strong>Régions prioritaires</strong>
+        <h4 style={{ textAlign: "center", margin: "10px 0" }}>
+          Régions prioritaires
+        </h4>
 
         {priorityRegions.length === 0 ? (
-          <p>Aucune région critique détectée.</p>
+          <p style={{ textAlign: "center" }}>Aucune région critique détectée.</p>
         ) : (
           <ul style={{ paddingLeft: "0", listStyle: "none" }}>
             {priorityRegions.map((region) => (
@@ -204,7 +211,7 @@ Régions prioritaires :
                   style={{
                     background: getRiskColor(region.score),
                     color: "white",
-                    padding: "3px 8px",
+                    padding: "6px 10px",
                     borderRadius: "6px",
                     marginRight: "8px",
                     fontSize: "11px",
@@ -221,7 +228,25 @@ Régions prioritaires :
           </ul>
         )}
 
-        <hr />
+        <div
+          style={{
+            marginTop: "12px",
+            paddingTop: "10px",
+            borderTop: "1px solid #ddd",
+            fontSize: "11px",
+            color: "#555",
+            textAlign: "center",
+            lineHeight: "1.6",
+          }}
+        >
+          <strong>Djibril ABEDI</strong>
+          <br />
+          Senior Geospatial Data Scientist
+          <br />
+          GeoAgri Sénégal · 2026
+          <br />
+          React · Leaflet · Data Visualization · Vercel
+        </div>
 
         <button
           onClick={exportReport}
@@ -234,6 +259,7 @@ Régions prioritaires :
             border: "none",
             borderRadius: "6px",
             cursor: "pointer",
+            fontWeight: "bold",
           }}
         >
           📄 Exporter le rapport
